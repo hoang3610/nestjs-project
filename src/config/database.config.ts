@@ -1,8 +1,10 @@
-import { registerAs } from '@nestjs/config';
+import { registerAs } from '@nestjs/config'; // ✅ BẮT BUỘC nếu dùng registerAs
 
 export default registerAs('database', () => ({
-  url: process.env.DATABASE_URL,
-  type: 'postgres',
-  synchronize: process.env.NODE_ENV === 'development',
-  logging: process.env.NODE_ENV === 'development',
+  type: 'mysql',
+  host: 'localhost',
+  port: 3306,
+  username: 'root',
+  password: '',
+  database: 'gas',
 }));

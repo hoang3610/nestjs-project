@@ -32,19 +32,21 @@ export class UsersService {
     }
 
     const user = this.usersRepository.create(createUserDto);
+    console.log(user)
     return this.usersRepository.save(user);
   }
 
   async findAll(): Promise<User[]> {
     return this.usersRepository.find({
-      select: ['id', 'email', 'username', 'firstName', 'lastName', 'isActive', 'createdAt', 'updatedAt']
+      // select: ['id', 'email', 'username', 'first_name', 'last_name', 'isActive', 'created_date', 'updatedAt']
+      select: ['id', 'email', 'username', 'first_name', 'last_name', 'created_date']
     });
   }
 
   async findById(id: number): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      select: ['id', 'email', 'username', 'firstName', 'lastName', 'isActive', 'createdAt', 'updatedAt']
+      select: ['id', 'email', 'username', 'first_name', 'last_name', 'created_date', 'address']
     });
 
     if (!user) {
@@ -65,7 +67,7 @@ export class UsersService {
   async findByEmailWithPassword(email: string): Promise<User | null> {
     return this.usersRepository.findOne({
       where: { email },
-      select: ['id', 'email', 'username', 'password', 'firstName', 'lastName', 'isActive']
+      select: ['id', 'email', 'username', 'password', 'first_name', 'last_name', 'isActive']
     });
   }
 

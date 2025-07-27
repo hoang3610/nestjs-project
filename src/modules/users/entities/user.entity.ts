@@ -6,31 +6,38 @@ import {
   UpdateDateColumn 
 } from 'typeorm';
 
-@Entity('users')
+@Entity('gas_users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  // @Column({ unique: true })
+  @Column()
   email: string;
 
-  @Column({ unique: true })
+  @Column()
   username: string;
 
   @Column()
   password: string;
+  
+  @Column()
+  // @Column({ nullable: true })
+  first_name?: string;
+  
+  // @Column({ nullable: true })
+  @Column()
+  last_name?: string;
+  
+  @Column()
+  address?: string;
 
-  @Column({ nullable: true })
-  firstName?: string;
-
-  @Column({ nullable: true })
-  lastName?: string;
-
-  @Column({ default: true })
+  // @Column({ default: true })
+  @Column()
   isActive: boolean;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_date: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;

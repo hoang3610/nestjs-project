@@ -6,8 +6,8 @@ import {
     UpdateDateColumn
 } from 'typeorm';
 
-@Entity('gas_product')
-export class Product {
+@Entity('gas_cart')
+export class Cart {
     @PrimaryGeneratedColumn()
     id: number;
 
