@@ -30,24 +30,24 @@ import { DatabaseConfig } from './config/interfaces/database-config.interface';
     }),
 
     // MySQL Database Connection
-    TypeOrmModule.forRootAsync({
-      name: 'mysql',
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const dbConfig = configService.get<DatabaseConfig>('database');
+    // TypeOrmModule.forRootAsync({
+    //   name: 'mysql',
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => {
+    //     const dbConfig = configService.get<DatabaseConfig>('database');
 
-        if (!dbConfig?.mysql) {
-          throw new Error('MySQL database config not found');
-        }
+    //     if (!dbConfig?.mysql) {
+    //       throw new Error('MySQL database config not found');
+    //     }
 
-        return {
-          ...dbConfig.mysql,
-          entities: [MySQLUser], // Chỉ MySQL User entity
-          name: 'mysql',
-        };
-      },
-    }),
+    //     return {
+    //       ...dbConfig.mysql,
+    //       entities: [MySQLUser], // Chỉ MySQL User entity
+    //       name: 'mysql',
+    //     };
+    //   },
+    // }),
 
     // PostgreSQL Database Connection
     TypeOrmModule.forRootAsync({

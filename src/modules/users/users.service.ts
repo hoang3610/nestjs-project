@@ -1,5 +1,5 @@
 // src/modules/users/users.service.ts
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Optional } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -13,18 +13,23 @@ import { DatabaseType } from './interfaces';
 @Injectable()
 export class UsersService {
   constructor(
-    // Inject MySQL repository
-    @InjectRepository(MySQLUser, 'mysql')
-    private mysqlUserRepository: Repository<MySQLUser>,
-
-    // Inject PostgreSQL repository
+    // PostgreSQL repository - bắt buộc (phải đứng trước optional)
     @InjectRepository(PostgreSQLUser, 'postgres')
     private postgresUserRepository: Repository<PostgreSQLUser>,
+
+    // Optional MySQL repository - không lỗi nếu MySQL connection bị tắt
+    @Optional()
+    @InjectRepository(MySQLUser, 'mysql')
+    private mysqlUserRepository?: Repository<MySQLUser>, // THAY ĐỔI: Thêm ? để optional
   ) { }
 
-  // SỬA LẠI: Không dùng union type cho repository
-  async create(createUserDto: CreateUserDto, dbType: DatabaseType = DatabaseType.MYSQL) {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL thay vì MySQL
+  async create(createUserDto: CreateUserDto, dbType: DatabaseType = DatabaseType.POSTGRES) {
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository có tồn tại không
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       const user = this.mysqlUserRepository.create(createUserDto);
       return await this.mysqlUserRepository.save(user);
     } else if (dbType === DatabaseType.POSTGRES) {
@@ -35,8 +40,13 @@ export class UsersService {
     }
   }
 
-  async findAll(dbType: DatabaseType = DatabaseType.MYSQL) {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL
+  async findAll(dbType: DatabaseType = DatabaseType.POSTGRES) {
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       return await this.mysqlUserRepository.find();
     } else if (dbType === DatabaseType.POSTGRES) {
       return await this.postgresUserRepository.find();
@@ -45,10 +55,15 @@ export class UsersService {
     }
   }
 
-  async findById(id: number, dbType: DatabaseType = DatabaseType.MYSQL) {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL
+  async findById(id: number, dbType: DatabaseType = DatabaseType.POSTGRES) {
     let user;
 
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       user = await this.mysqlUserRepository.findOne({ where: { id } });
     } else if (dbType === DatabaseType.POSTGRES) {
       user = await this.postgresUserRepository.findOne({ where: { id } });
@@ -62,8 +77,13 @@ export class UsersService {
     return user;
   }
 
-  async findByEmail(email: string, dbType: DatabaseType = DatabaseType.MYSQL) {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL
+  async findByEmail(email: string, dbType: DatabaseType = DatabaseType.POSTGRES) {
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       return await this.mysqlUserRepository.findOne({ where: { email } });
     } else if (dbType === DatabaseType.POSTGRES) {
       return await this.postgresUserRepository.findOne({ where: { email } });
@@ -72,8 +92,13 @@ export class UsersService {
     }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, dbType: DatabaseType = DatabaseType.MYSQL) {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL
+  async update(id: number, updateUserDto: UpdateUserDto, dbType: DatabaseType = DatabaseType.POSTGRES) {
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       await this.mysqlUserRepository.update(id, updateUserDto);
       return this.findById(id, dbType);
     } else if (dbType === DatabaseType.POSTGRES) {
@@ -84,10 +109,15 @@ export class UsersService {
     }
   }
 
-  async remove(id: number, dbType: DatabaseType = DatabaseType.MYSQL) {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL
+  async remove(id: number, dbType: DatabaseType = DatabaseType.POSTGRES) {
     let result;
 
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       result = await this.mysqlUserRepository.delete(id);
     } else if (dbType === DatabaseType.POSTGRES) {
       result = await this.postgresUserRepository.delete(id);
@@ -116,6 +146,10 @@ export class UsersService {
 
     // Xử lý từng database riêng biệt
     if (toDb === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       const newUser = this.mysqlUserRepository.create(userData);
       return await this.mysqlUserRepository.save(newUser);
     } else if (toDb === DatabaseType.POSTGRES) {
@@ -139,13 +173,17 @@ export class UsersService {
     };
   }
 
-  // Phương thức đặc biệt cho authentication - mặc định tìm trong MySQL
-  async findByEmailForAuth(email: string): Promise<MySQLUser | null> {
-    return await this.mysqlUserRepository.findOne({ where: { email } });
+  // THAY ĐỔI: Sửa để sử dụng PostgreSQL cho authentication
+  async findByEmailForAuth(email: string): Promise<PostgreSQLUser | null> {
+    return await this.postgresUserRepository.findOne({ where: { email } });
   }
 
   // Helper methods với type cụ thể
   async createInMySQL(createUserDto: CreateUserDto): Promise<MySQLUser> {
+    // THAY ĐỔI: Thêm check MySQL repository
+    if (!this.mysqlUserRepository) {
+      throw new BadRequestException('MySQL is currently disabled');
+    }
     const user = this.mysqlUserRepository.create(createUserDto);
     return await this.mysqlUserRepository.save(user);
   }
@@ -156,6 +194,10 @@ export class UsersService {
   }
 
   async updateInMySQL(id: number, updateUserDto: UpdateUserDto): Promise<MySQLUser> {
+    // THAY ĐỔI: Thêm check MySQL repository
+    if (!this.mysqlUserRepository) {
+      throw new BadRequestException('MySQL is currently disabled');
+    }
     await this.mysqlUserRepository.update(id, updateUserDto);
     const user = await this.mysqlUserRepository.findOne({ where: { id } });
     if (!user) {
@@ -174,17 +216,21 @@ export class UsersService {
   }
 
   // Utility method để get specific repository (nếu cần dùng trong các method khác)
-  getMySQLRepository(): Repository<MySQLUser> {
-    return this.mysqlUserRepository;
+  getMySQLRepository(): Repository<MySQLUser> | undefined {
+    return this.mysqlUserRepository; // THAY ĐỔI: Return type có thể undefined
   }
 
   getPostgreSQLRepository(): Repository<PostgreSQLUser> {
     return this.postgresUserRepository;
   }
 
-  // THÊM METHOD NÀY - cho authentication với password
-  async findByEmailWithPassword(email: string, dbType: DatabaseType = DatabaseType.MYSQL): Promise<MySQLUser | PostgreSQLUser | null> {
+  // THAY ĐỔI: Mặc định sử dụng PostgreSQL cho authentication
+  async findByEmailWithPassword(email: string, dbType: DatabaseType = DatabaseType.POSTGRES): Promise<MySQLUser | PostgreSQLUser | null> {
     if (dbType === DatabaseType.MYSQL) {
+      // THAY ĐỔI: Thêm check MySQL repository
+      if (!this.mysqlUserRepository) {
+        throw new BadRequestException('MySQL is currently disabled');
+      }
       return await this.mysqlUserRepository.findOne({
         where: { email },
         select: ['id', 'email', 'password', 'firstName', 'lastName', 'role', 'isActive', 'createdAt', 'updatedAt']

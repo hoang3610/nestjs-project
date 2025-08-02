@@ -11,7 +11,7 @@ import { PostgreSQLUser } from './entities/postgres/user.entity';
 @Module({
   imports: [
     // Import cho MySQL connection
-    TypeOrmModule.forFeature([MySQLUser], 'mysql'),
+    // TypeOrmModule.forFeature([MySQLUser], 'mysql'),
     // Import cho PostgreSQL connection
     TypeOrmModule.forFeature([PostgreSQLUser], 'postgres'),
   ],
