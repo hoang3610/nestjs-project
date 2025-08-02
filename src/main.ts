@@ -12,7 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // Global prefix
-  const apiPrefix = configService.get<string>('apiPrefix') || 'api/v1';
+  const apiPrefix = configService.get<string>('app.apiPrefix') || 'api/v1';
   app.setGlobalPrefix(apiPrefix);
 
   // Global pipes

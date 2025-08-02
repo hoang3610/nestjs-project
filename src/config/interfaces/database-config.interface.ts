@@ -1,9 +1,16 @@
 // src/config/interfaces/database-config.interface.ts
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+
 export interface DatabaseConfig {
-  type: 'mysql' | 'postgres'; // hoặc các DB bạn hỗ trợ
-  host: string;
+  mysql: TypeOrmModuleOptions;
+  postgres: TypeOrmModuleOptions;
+}
+
+export interface AppConfig {
   port: number;
-  username: string;
-  password: string;
-  database: string;
+  apiPrefix: string;
+  jwt: {
+    secret: string;
+    expiresIn: string;
+  };
 }

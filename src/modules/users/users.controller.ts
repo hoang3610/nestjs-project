@@ -12,7 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import {
   ApiTags,
   ApiOperation,
@@ -24,7 +24,7 @@ import {
 @ApiTags('Users') // <--- Nhóm 'Users' trong Swagger UI
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Post()
   @ApiOperation({ summary: 'Tạo người dùng mới' })
@@ -34,7 +34,7 @@ export class UsersController {
   }
 
   // @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('')
   @ApiOperation({ summary: 'Lấy danh sách tất cả người dùng' })
   @ApiResponse({ status: 200, description: 'Danh sách người dùng' })
   findAll() {
@@ -50,7 +50,7 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Cập nhật người dùng theo ID' })
@@ -63,7 +63,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Xoá người dùng theo ID' })

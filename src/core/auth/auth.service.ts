@@ -19,12 +19,12 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<any> {
     // FIX: Sử dụng method mới có password
     const user = await this.usersService.findByEmailWithPassword(email);
-    
+
     if (user && await bcrypt.compare(password, user.password)) {
       const { password, ...result } = user;
       return result;
@@ -62,7 +62,7 @@ export class AuthService {
       ...createUserDto,
       password: hashedPassword,
     };
-    
+
     const user = await this.usersService.create(userData);
     const { password, ...result } = user;
     return result;

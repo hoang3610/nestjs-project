@@ -1,28 +1,11 @@
-import { IsOptional, IsBoolean, IsString, IsEmail, MinLength } from 'class-validator';
+// src/modules/users/dto/update-user.dto.ts
+import { PartialType } from '@nestjs/swagger';
+import { CreateUserDto } from './create-user.dto';
+import { IsOptional, IsBoolean } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class UpdateUserDto {
-  @IsOptional()
-  @IsEmail()
-  email?: string;
-
-  @IsOptional()
-  @IsString()
-  @MinLength(3)
-  username?: string;
-
-  @IsOptional()
-  @IsString()
-  @MinLength(6)
-  password?: string;
-
-  @IsOptional()
-  @IsString()
-  firstName?: string;
-
-  @IsOptional()
-  @IsString()
-  lastName?: string;
-
+export class UpdateUserDto extends PartialType(CreateUserDto) {
+  @ApiPropertyOptional({ description: 'Whether the user account is active' })
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
