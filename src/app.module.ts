@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 // Modules
 import { CartsModule } from './modules/carts/carts.module';
 import { ProductsModule } from './modules/products/products.module';
-// import { AuthModule } from './core/auth/auth.module';
+import { AuthModule } from './core/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 
 // Import entities từ đường dẫn chính xác
@@ -71,8 +71,8 @@ import { DatabaseConfig } from './config/interfaces/database-config.interface';
     }),
 
     // Business Modules
-    // AuthModule,
-    UsersModule,
+    UsersModule, // có thể tạo user => ví dụ như admin tạo NV
+    AuthModule, // users tự đăng ký, có ràng buộc
     // ProductsModule,
     // CartsModule,
   ],

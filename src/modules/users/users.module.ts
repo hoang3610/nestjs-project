@@ -12,11 +12,11 @@ import { PostgreSQLUser } from './entities/postgres/user.entity';
   imports: [
     // Import cho MySQL connection
     // TypeOrmModule.forFeature([MySQLUser], 'mysql'),
-    // Import cho PostgreSQL connection
+    // Import cho PostgreSQL connectionu
     TypeOrmModule.forFeature([PostgreSQLUser], 'postgres'),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService], // providers là điều kiện bắt buộc Giúp Nest biết rằng: "tôi có một provider tên là UsersService để tạo instance khi cần => có provider thì controller mới hiểu được
   exports: [UsersService],
 })
 export class UsersModule { }

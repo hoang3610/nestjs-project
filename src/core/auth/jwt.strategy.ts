@@ -11,7 +11,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
     private readonly usersService: UsersService,
   ) {
-    const jwtSecret = configService.get<string>('jwt.secret');
+    // FIX: Sử dụng đúng path để truy cập JWT secret
+    const jwtSecret = configService.get<string>('app.jwt.secret');
+    
     if (!jwtSecret) {
       throw new Error('JWT_SECRET is not defined in environment variables');
     }

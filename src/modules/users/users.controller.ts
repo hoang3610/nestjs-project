@@ -12,7 +12,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import {
   ApiTags,
   ApiOperation,
@@ -33,7 +33,12 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @Get('introduce')
+  async hello() {
+    return this.usersService.getHello('Hello Hoàng Đẹp Trai nhé!!!');
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('')
   @ApiOperation({ summary: 'Lấy danh sách tất cả người dùng' })
   @ApiResponse({ status: 200, description: 'Danh sách người dùng' })
@@ -41,7 +46,7 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Lấy thông tin một người dùng theo ID' })
   @ApiResponse({ status: 200, description: 'Thông tin người dùng' })
@@ -50,7 +55,7 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Patch(':id')
   @ApiOperation({ summary: 'Cập nhật người dùng theo ID' })
@@ -63,7 +68,7 @@ export class UsersController {
     return this.usersService.update(id, updateUserDto);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Delete(':id')
   @ApiOperation({ summary: 'Xoá người dùng theo ID' })

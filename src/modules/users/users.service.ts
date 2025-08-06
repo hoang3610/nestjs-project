@@ -244,4 +244,8 @@ export class UsersService {
       throw new BadRequestException('Invalid database type');
     }
   }
+
+  getHello(name: string) {
+    return name;
+  }
 }

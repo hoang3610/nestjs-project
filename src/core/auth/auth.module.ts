@@ -14,13 +14,13 @@ import { UsersModule } from '../../modules/users/users.module';
     UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('jwt.secret'),
+        secret: configService.get<string>('app.jwt.secret'),
         signOptions: {
-          expiresIn: configService.get<string>('jwt.expiresIn'),
+          expiresIn: configService.get<string>('app.jwt.expiresIn'),
         },
       }),
-      inject: [ConfigService],
     }),
   ],
   providers: [AuthService, JwtStrategy, LocalStrategy],
